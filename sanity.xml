@@ -1,0 +1,48 @@
+<suite name="Sanity">
+    <parameter name="octaneUrl" value=""/>
+    <parameter name="tenantId" value=""/>
+    <parameter name="tenantName" value=""/>
+    <parameter name="workspaceName" value=""/>
+    <parameter name="userName" value=""/>
+    <parameter name="password" value=""/>
+
+<!--        <parameter name="octaneUrl" value="https://qa91.almoctane.com"/>-->
+<!--        <parameter name="tenantId" value=""/>-->
+<!--        <parameter name="tenantName" value="FTE with Aviator_827679582"/>-->
+<!--        <parameter name="workspaceName" value="sanity_workspace"/>-->
+<!--        <parameter name="userName" value="mqm_rnd@hpe.com"/>-->
+<!--        <parameter name="password" value="JustK33pGoing!"/>-->
+
+    <test name="initializeTest">
+        <classes>
+            <class name="com.ot.automation.tests.SanityUnits">
+                <methods>
+                    <include name="createTenantUnit"/>
+                    <include name="loginOctaneUnit"/>
+                    <include name="validateCIServerConnectedUnit"/>
+                    <include name="validateTestRunnersTabUnit"/>
+                    <include name="validateCodelessRunnerCreated"/>
+                    <include name="sanityTestCreateJenkinsCIAndRunner"/>
+                    <include name="sanityTestExecutionStorage"/>
+                    <include name="sanityTestExecutionBrowsersUnit"/>
+                    <include name="sanityTestExecutionMobileUnit"/>
+                    <include name="sanityTestExecutionUftRecurringUnit"/>
+                    <include name="sanityTestExecutionMbtUnit"/>
+                    <include name="sanityTestExecutionSeleniumUnit"/>
+                    <include name="sanityTestExecutionSeleniumMbtUnit"/>
+                    <include name="sanityTestSkippedSchedule"/>
+                    <include name="sanityTestCancelledByUserUnit"/>
+                    <include name="sanityTestReportMbtUFTUnit"/>
+                    <include name="sanityTestReportMbtSeleniumUnit"/>
+                    <include name="sanityTestExecutionMbtDPUnit"/>
+                    <include name="sanityTestExecutionSeleniumMbtDPUnit"/>
+                    <include name="sanityTestFunctionLibrariesMbtUFTUnit"/>
+                    <include name="sanityTestExecutionMBTJenkinsUnit"/>
+                    <include name="sanityTestExecutionUFTJenkinsUnit"/>
+                    <include name="sanityTestExecutionIterationMbtSeleniumUnit"/>
+                    <include name="sanityTestExecutionIterationMbtUftUnit"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+</suite>

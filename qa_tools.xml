@@ -1,0 +1,17 @@
+<suite name="QATools">
+    <parameter name="browserLabURL" value="https://integ-master.ftdigitallab.valueedge.saas.microfocus.com/selenium/wd/hub"/>
+    <parameter name="oauthClientId" value="oauth2-4CmkZYpY07RFJLZG3m9C@microfocus.com"/>
+    <parameter name="oauthClientSecret" value="j4hmKxSTnLVjcSUoy2iJ"/>
+    <parameter name="tenantId" value="412295018"/>
+    <test name="initializeTest">
+        <classes>
+            <class name="com.ot.automation.tests.QATools">
+                <methods>
+<!--                    <include name="beforeTestQATool"/>-->
+<!--                    <include name="addOctaneToJenkins"/>-->
+                    <include name="verifyBrowserLabRespond"/>
+                </methods>
+            </class>
+        </classes>
+    </test>
+</suite>
