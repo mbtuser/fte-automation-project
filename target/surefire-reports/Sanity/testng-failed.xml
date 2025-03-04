@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE suite SYSTEM "https://testng.org/testng-1.0.dtd">
+<suite name="Failed suite [Sanity]" verbose="0">
+  <parameter name="octaneUrl" value="https://integration-master-dev.almoctane.com"/>
+  <parameter name="password" value="JustK33pGoing!"/>
+  <parameter name="tenantName" value="Daily_Automation_Internal_040325_fUO_181046696"/>
+  <parameter name="tenantId" value=""/>
+  <parameter name="workspaceName" value="automation_workspace"/>
+  <parameter name="userName" value="mqm_rnd@hpe.com"/>
+  <test thread-count="5" name="initializeTest(failed)" verbose="0">
+    <classes>
+      <class name="com.ot.automation.tests.SanityUnits">
+        <methods>
+          <include name="logoutOctane"/>
+          <include name="beforeTest"/>
+          <include name="sanityTestExecutionMbtDPUnit"/>
+        </methods>
+      </class> <!-- com.ot.automation.tests.SanityUnits -->
+    </classes>
+  </test> <!-- initializeTest(failed) -->
+</suite> <!-- Failed suite [Sanity] -->

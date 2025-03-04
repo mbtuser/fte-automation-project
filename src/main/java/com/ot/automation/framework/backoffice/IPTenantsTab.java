@@ -57,13 +57,14 @@ public class IPTenantsTab extends BaseElement {
 
         // Set quantities
         for (int i = 0; i < subNames.size(); i++) {
-            BaseElement textbox = new BaseElement(By.xpath("//span[span[@title='" + subNames.get(i) + "']]/span/input[@type='text']"), createTenantDialog);
+            BaseElement textbox = new BaseElement(By.xpath("//span[span[normalize-space(@title) = '" + subNames.get(i) + "']]/span/input[@type='text']"), createTenantDialog);
             textbox.sendKeys(subQuantities.get(i).toString());
         }
 
         BaseElement doneButton = new BaseElement(By.cssSelector("[ng-click='save();']"), createTenantDialog);
         doneButton.click();
     }
+
     private void clickAddTenant() {
         BaseElement addButton = new BaseElement(By.cssSelector("[data-ng-click='addNewTenant();']"), this);
         addButton.click();

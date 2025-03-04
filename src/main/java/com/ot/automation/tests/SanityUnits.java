@@ -4,6 +4,8 @@ import com.ot.automation.framework.octane.framework.*;
 import com.ot.automation.framework.octane.framework.Entities.*;
 import com.ot.automation.framework.octane.ui.spaces.DevOpsView;
 import org.apache.commons.lang3.RandomStringUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 import org.openqa.selenium.By;
 import org.openqa.selenium.remote.RemoteWebDriver;
@@ -32,9 +34,14 @@ public class SanityUnits extends BaseAutomationTest {
     //    private final static String seleniumRepoUrl = "https://github.com/mbtuser/Selenium-demo.git";
     private final static String mbtUftDpRepoUrl = "https://github.com/mbtuser/UFTOne-Data-Population.git";
     private final static String seleniumDpRepoUrl = "https://github.com/mbtuser/Selenium-Data-Population.git";
+    private final static String mainProjectRepoUrl = "https://github.com/mnovac/fte-automation.git";
+    private final static String mainProjectUser = "mnovac@opentext.com";
+    private final static String mainProjectPassword = "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";
+    private final static String mainProjectRunnerName = "Selenium MBT Main";
     private final static String packagePathSelenium = "org.example";
     private final static String packagePathExecutionStorage = "opentext.sanity";
     private final static String packagePathDataPopulation = "opentext.mbt.tests";
+    private final static String packagePathMainProject = "com.ot.automation.tests";
     private final static String uftRunnerName = "UFT";
     private final static String mbtRunnerName = "MBT (Open Text Functional Testing)";
     private final static String mbtRunnerNameOld = "MBT (UFT)";
@@ -60,22 +67,37 @@ public class SanityUnits extends BaseAutomationTest {
     private final static String mbtFrameworkName = "MBT (Open Text Functional Testing)";
     private final static String uftFrameworkName = "UFT";
     private final static boolean waitForResults = true;
+    private static final Logger log = LogManager.getLogger(SanityUnits.class);
+    private long startTime, endTime, startSCHTime, endSCHTime, downloadReportTime, createMBTTime, createMBTEndTime;
 
     @BeforeSuite
     @Test
     @Parameters({"octaneUrl", "tenantId", "tenantName", "workspaceName", "userName", "password"})
     void beforeTest(@Optional("https://integration-master-dev.almoctane.com") String octaneUrl, @Optional String tenantId, @Optional("FTE_*") String tenantName, @Optional("sanity_workspace") String workspaceName, @Optional("mqm_rnd@hpe.com") String userName, @Optional("JustK33pGoing!") String password) {
+        startTime = System.currentTimeMillis();
+        log.info("*********** Starting to initialize Env before tests run: {}", startTime);
         initializeEnv(octaneUrl, tenantId, tenantName, workspaceName, userName, password);
         setupDriver(driver, waiter);
+        endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+        log.info("*********** Finish to initialize Env before tests run: {}. test run took {} ms", endTime, duration);
+        System.out.println("initialize took " + duration + " milliseconds");
     }
 
     @Test
     public void loginOctaneUnit() {
+        startTime = System.currentTimeMillis();
+        log.info("*********** Login to Octane start: {}", startTime);
         loginOctane();
+        endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+        log.info("*********** Login to Octane end: {}. test run took {} ms", endTime, duration);
     }
 
     @Test
     public void createTenantUnit() {
+        startTime = System.currentTimeMillis();
+        log.info("*********** create tenant start start: {}", startTime);
         loginBackOffice("mqm_rnd@hpe.com", "JustK33pGoing!");
         if (GeneralUtils.getSiteParameter("FTE_AI_ACCESS_KEY").equals("")) {
             GeneralUtils.setSiteParameter("FTE_AI_ACCESS_KEY", "clientID=fte_ai_key_frankfurt_temp_n0edpr98klyz0u9ng3vwp78xo;secret=-15924730165214451105P;tenant=460005;url=https://ftai-eur.saas.microfocus.com/;");
@@ -129,7 +151,7 @@ public class SanityUnits extends BaseAutomationTest {
         BO.ipPage.subscriptionsTab.checkApplyDateToAll();
         BO.ipPage.subscriptionsTab.addNewSubscription(sub1quantity, sub1name, null, null);
         BO.ipPage.subscriptionsTab.addNewSubscription(sub2quantity, sub2name, null, null);
-        BO.ipPage.subscriptionsTab.addNewSubscription(sub3quantity, sub3name, LocalDateTime.now(), LocalDateTime.now().plusDays(1));
+        BO.ipPage.subscriptionsTab.addNewSubscription(sub3quantity, sub3name, null, null);
         BO.ipPage.subscriptionsTab.addNewSubscription(sub4quantity, sub4name, LocalDateTime.now(), LocalDateTime.now().plusDays(1));
         BO.ipPage.clickTenantsTab();
 
@@ -137,8 +159,7 @@ public class SanityUnits extends BaseAutomationTest {
         String timezone = "(GMT +2) Europe/Bucharest)";
         String NEW_OCTANE_TENANT_NAME = OCTANE_TENANT_NAME.replace("*", "") + LocalDate.now().format(DateTimeFormatter.ofPattern("ddMMyy")) + "_" + RandomStringUtils.randomAlphabetic(3);
 
-        BO.ipPage.tenantsTab.addTenant(NEW_OCTANE_TENANT_NAME, farm, timezone, "Basic", "Dev", List.of(sub1quantity, sub2quantity, sub3quantity), List.of(sub1name, sub2name, sub3name));
-//        BO.ipPage.tenantsTab.addTenant(NEW_OCTANE_TENANT_NAME, farm, timezone, "Basic", "Dev", List.of(sub1quantity, sub2quantity, sub3quantity, sub4quantity), List.of(sub1name, sub2name, sub3name, sub4name));
+        BO.ipPage.tenantsTab.addTenant(NEW_OCTANE_TENANT_NAME, farm, timezone, "Basic", "Dev", List.of(sub1quantity, sub2quantity, sub3quantity, sub4quantity), List.of(sub1name, sub2name, sub3name, sub4name));
         BO.ipPage.clickApproveSubmit();
 
         // Validate tenant is created with ValueEdge Instance ID
@@ -149,6 +170,9 @@ public class SanityUnits extends BaseAutomationTest {
 
         OCTANE_TENANT_ID = GeneralUtils.getSpaceIdByName(NEW_OCTANE_TENANT_NAME);
         logoutBackOffice();
+        endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+        log.info("*********** create tenant end: {}. test run took {} ms", endTime, duration);
     }
 
     @Test
@@ -199,6 +223,8 @@ public class SanityUnits extends BaseAutomationTest {
 
     @Test
     public void validateTestRunnersTabUnit() {
+        startTime = System.currentTimeMillis();
+        log.info("*********** create runners start: {}", startTime);
         navigateToDevOpsTab();
         UI.spacesMainView.workspaceForm.devopsView.selectTab(DevOpsView.Tabs.TEST_RUNNERS);
         UI.spacesMainView.workspaceForm.devopsView.testRunnersContainer.expectVisible();
@@ -206,15 +232,17 @@ public class SanityUnits extends BaseAutomationTest {
         String mbtRunnerName = getMbtRunnerName();
 
         // Create test runners
-        CloudRunner.Data cr1 = createCloudRunner(trimParenthesis(uftRunnerName), uftRunnerName, mbtUftRepoUrl, null);
-        CloudRunner.Data cr2 = createCloudRunner(trimParenthesis(mbtRunnerName), mbtRunnerName, mbtUftRepoUrl, null);
-        CloudRunner.Data cr3 = createCloudRunner(trimParenthesis(seleniumRunnerName), seleniumRunnerName, seleniumRepoUrl, packagePathSelenium);
-        CloudRunner.Data cr4 = createCloudRunner(trimParenthesis(seleniumMbtRunnerName), seleniumMbtRunnerName, seleniumRepoUrl, packagePathSelenium);
-        CloudRunner.Data cr5 = createCloudRunner(trimParenthesis(seleniumExecutionStorageRunnerName), seleniumRunnerName, null, packagePathExecutionStorage);
-        CloudRunner.Data cr6 = createCloudRunner(trimParenthesis(mbtDPRunnerName), mbtRunnerName, mbtUftDpRepoUrl, null);
-        CloudRunner.Data cr7 = createCloudRunner(trimParenthesis(seleniumMbtDPRunnerName), seleniumMbtRunnerName, seleniumDpRepoUrl, packagePathDataPopulation);
+        //CloudRunner.Data crMain = createCloudRunner(trimParenthesis(mainProjectRunnerName), seleniumMbtRunnerName, mainProjectRepoUrl, packagePathMainProject, mainProjectUser, mainProjectPassword);
+        CloudRunner.Data cr1 = createCloudRunner(trimParenthesis(uftRunnerName), uftRunnerName, mbtUftRepoUrl, null, null, null);
+        CloudRunner.Data cr2 = createCloudRunner(trimParenthesis(mbtRunnerName), mbtRunnerName, mbtUftRepoUrl, null, null, null);
+        CloudRunner.Data cr3 = createCloudRunner(trimParenthesis(seleniumRunnerName), seleniumRunnerName, seleniumRepoUrl, packagePathSelenium, null, null);
+        CloudRunner.Data cr4 = createCloudRunner(trimParenthesis(seleniumMbtRunnerName), seleniumMbtRunnerName, seleniumRepoUrl, packagePathSelenium, null, null);
+        CloudRunner.Data cr5 = createCloudRunner(trimParenthesis(seleniumExecutionStorageRunnerName), seleniumRunnerName, null, packagePathExecutionStorage, null, null);
+        CloudRunner.Data cr6 = createCloudRunner(trimParenthesis(mbtDPRunnerName), mbtRunnerName, mbtUftDpRepoUrl, null, null, null);
+        CloudRunner.Data cr7 = createCloudRunner(trimParenthesis(seleniumMbtDPRunnerName), seleniumMbtRunnerName, seleniumDpRepoUrl, packagePathDataPopulation, null, null);
 
         // Sync runners
+        //syncRunner(crMain);
         syncRunner(cr1);
         syncRunner(cr2);
         syncRunner(cr3);
@@ -223,6 +251,7 @@ public class SanityUnits extends BaseAutomationTest {
         syncRunner(cr7);
 
         // Validate sync status for each
+        //GeneralUtils.waitAtMostFor(240000, "Sync status for " + mainProjectRunnerName + " is not successful.", () -> isSyncSuccessful(crMain.getId()) ? true : null);
         GeneralUtils.waitAtMostFor(150000, "Sync status for " + uftRunnerName + " is not successful.", () -> isSyncSuccessful(cr1.getId()) ? true : null);
         GeneralUtils.waitAtMostFor(150000, "Sync status for " + mbtRunnerName + " is not successful.", () -> isSyncSuccessful(cr2.getId()) ? true : null);
         GeneralUtils.waitAtMostFor(150000, "Sync status for " + seleniumRunnerName + " is not successful.", () -> isSyncSuccessful(cr3.getId()) ? true : null);
@@ -230,23 +259,34 @@ public class SanityUnits extends BaseAutomationTest {
 
         // Validate sync status in UI
         UI.spacesMainView.workspaceForm.devopsView.testRunnersContainer.toolbar.clickRefresh();
+        //UI.spacesMainView.workspaceForm.devopsView.testRunnersContainer.grid.getRowById(crMain.getId()).getCell("sync_status").expectTextToContain("Success");
         UI.spacesMainView.workspaceForm.devopsView.testRunnersContainer.grid.getRowById(cr1.getId()).getCell("sync_status").expectTextToContain("Success");
         UI.spacesMainView.workspaceForm.devopsView.testRunnersContainer.grid.getRowById(cr2.getId()).getCell("sync_status").expectTextToContain("Success");
         UI.spacesMainView.workspaceForm.devopsView.testRunnersContainer.grid.getRowById(cr3.getId()).getCell("sync_status").expectTextToContain("Success");
         UI.spacesMainView.workspaceForm.devopsView.testRunnersContainer.grid.getRowById(cr4.getId()).getCell("sync_status").expectTextToContain("Success");
         UI.spacesMainView.workspaceForm.devopsView.testRunnersContainer.grid.getRowById(cr6.getId()).getCell("sync_status").expectTextToContain("Success");
         UI.spacesMainView.workspaceForm.devopsView.testRunnersContainer.grid.getRowById(cr7.getId()).getCell("sync_status").expectTextToContain("Success");
+        endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+        log.info("*********** create runners end: {}. test run took {} ms", endTime, duration);
     }
 
     @Test
     public void sanityTestCreateJenkinsCIAndRunner() {
+        startTime = System.currentTimeMillis();
+        log.info("*********** Create Jenkins CI and Runner start: {}", startTime);
         addCIJenkins(ciJenkinsName, jenkinsURL);
         addTestRunner(mbtTestRunnerName, ciJenkinsName, mbtFrameworkName, mbtUftGitUrl);
         addTestRunner(uftTestRunnerName, ciJenkinsName, uftFrameworkName, mbtUftGitUrl);
+        endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+        log.info("*********** Create Jenkins CI and Runner end: {}. test run took {} ms", endTime, duration);
     }
 
     @Test
     public void sanityTestExecutionUftRecurringUnit() {
+        startTime = System.currentTimeMillis();
+        log.info("*********** Execution of pure UFT One with recursing SCH start: {}", startTime);
         // Create TS for UFT
         TestSuite.Data tsUft = TestSuite.create("UFT_TS_" + RandomStringUtils.randomAlphabetic(5));
         tsUft = TestSuite.getEntityById(tsUft.getId(), List.of(TestSuite.Fields.NAME));
@@ -257,12 +297,15 @@ public class SanityUnits extends BaseAutomationTest {
         createSchedule(scheduleNameUftRec, "Recurring");
         addSuiteToSchedule(tsUft);
         String recurringScheduleRunId = startSchedule();
-
+        startSCHTime = System.currentTimeMillis();
+        log.info("*********** Schedule Run Execution of pure UFT One with recursing SCH start: {}", startSCHTime);
         // Wait for results
         if (waitForResults) {
             expectScheduleCompleted(recurringScheduleRunId);
             expectGeneralRunStatus(recurringScheduleRunId, 1, 0, 0);
-
+            endSCHTime = System.currentTimeMillis();
+            long duration = endSCHTime - startSCHTime;
+            log.info("*********** Schedule Run Execution of pure UFT One with recursing SCH end: {}. SCH run took {} ms", endSCHTime, duration);
             // Download report
             navigateByUrlToEntity(tsUft);
 
@@ -274,18 +317,27 @@ public class SanityUnits extends BaseAutomationTest {
 
             UI.docViews.docView.detailsTab.expectVisible();
             UI.docViews.docView.detailsTab.toolbar.clickDownloadTestRunReport();
+            downloadReportTime = System.currentTimeMillis();
+            log.info("*********** Download Report of pure UFT One: {}", downloadReportTime);
             UI.notifications.success.expectTextToContain("Test run report successfully downloaded");
         }
+        endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+        log.info("*********** Execution of pure UFT One with recursing SCH end: {}. test run took {} ms", endTime, duration);
     }
 
     @Test
     public void sanityTestExecutionMbtUnit() {
+        startTime = System.currentTimeMillis();
+        log.info("*********** Execution of MBT UFT One start: {}", startTime);
         // Create TS for MBT
         Unit.Data unit1 = Unit.getEntityByRepositoryPath("'UFTOneAutomationTests\\\\FlightLinkParamAutomationTests\\\\Action1:1+Login'");
         Unit.Data unit2 = Unit.getEntityByRepositoryPath("'UFTOneAutomationTests\\\\FlightLinkParamAutomationTests\\\\Action2:2+Flight+Confirmation'");
         Unit.Data unit3 = Unit.getEntityByRepositoryPath("'UFTOneAutomationTests\\\\FlightLinkParamAutomationTests\\\\Action3:3+Search+Order'");
         Model.Data model = createModel("Link_Param_Model_" + RandomStringUtils.randomAlphabetic(5), trimParenthesis(getMbtRunnerName()), List.of(unit1, unit2, unit3));
 
+        createMBTTime = System.currentTimeMillis();
+        log.info("*********** Create MBT with link parameters: {}", createMBTTime);
         ModelBasedTest.Data mbtTest = createMbtTest(model);
         navigateByUrlToEntity(mbtTest);
         UI.docViews.docView.selectTab("model-based-test-parameters-tab");
@@ -310,6 +362,9 @@ public class SanityUnits extends BaseAutomationTest {
         UI.docViews.docView.dataSetsContainer.grid.getSlickRow(1).click();
         UI.docViews.docView.dataSetsContainer.toolbar.clickSave();
 
+        createMBTEndTime = System.currentTimeMillis();
+        long durationMBT = createMBTEndTime - createMBTTime;
+        log.info("*********** Create MBT with link parameters end: {}. to create the MBT and link the parameters took: {}", createMBTEndTime, durationMBT);
         TestSuite.Data tsMbt = TestSuite.create("MBT_UFT_Link_Param_TS_" + RandomStringUtils.randomAlphabetic(5));
         tsMbt = TestSuite.getEntityById(tsMbt.getId(), List.of(TestSuite.Fields.NAME));
         navigateByUrlToEntity(tsMbt);
@@ -321,14 +376,25 @@ public class SanityUnits extends BaseAutomationTest {
 
         // Run schedule and wait for result
         String scheduleRunId = startSchedule();
+        startSCHTime = System.currentTimeMillis();
+        log.info("*********** Schedule Run Execution of MBT UFT One SCH start: {}", startSCHTime);
         if (waitForResults) {
             expectScheduleCompleted(scheduleRunId);
             expectGeneralRunStatus(scheduleRunId, 0, 1, 0);
+            endSCHTime = System.currentTimeMillis();
+            long duration = endSCHTime - startSCHTime;
+            log.info("*********** Schedule Run Execution of MBT UFT One end: {}. SCH run took {} ms", endSCHTime, duration);
         }
+
+        endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+        log.info("*********** Execution of MBT UFT One end: {}. test run took {} ms", endTime, duration);
     }
 
     @Test
     public void sanityTestExecutionMobileUnit() {
+        startTime = System.currentTimeMillis();
+        log.info("*********** Execution of pure UFT One on mobile start: {}", startTime);
         // Create TS for Mobile
         TestSuite.Data tsMobile = TestSuite.create("UFT_Mobile_TS_" + RandomStringUtils.randomAlphabetic(5));
         navigateByUrlToEntity(tsMobile);
@@ -340,14 +406,20 @@ public class SanityUnits extends BaseAutomationTest {
 
         // Run schedule and wait for result
         String scheduleRunId = startSchedule();
+        log.info("*********** Schedule Run Execution of pure UFT One on mobile start: {}", startTime);
         if (waitForResults) {
             expectScheduleCompleted(scheduleRunId);
             expectGeneralRunStatus(scheduleRunId, 2, 0, 0);
         }
+        endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+        log.info("*********** Execution of pure UFT One on mobile end: {}. test run took {} ms", endTime, duration);
     }
 
     @Test
     public void sanityTestExecutionBrowsersUnit() {
+        startTime = System.currentTimeMillis();
+        log.info("*********** Execution of pure UFT One on browsers start: {}", startTime);
         // Create TS for Browsers
         TestSuite.Data tsBrowsers = TestSuite.create("UFT_Browsers_TS_" + RandomStringUtils.randomAlphabetic(5));
         navigateByUrlToEntity(tsBrowsers);
@@ -361,14 +433,24 @@ public class SanityUnits extends BaseAutomationTest {
 
         // Run schedule and wait for result
         String scheduleRunId = startSchedule();
+        startSCHTime = System.currentTimeMillis();
+        log.info("*********** Schedule Run Execution of pure UFT One on browsers start: {}", startSCHTime);
         if (waitForResults) {
             expectScheduleCompleted(scheduleRunId);
             expectGeneralRunStatus(scheduleRunId, 2, 0, 0);
+            endSCHTime = System.currentTimeMillis();
+            long duration = endSCHTime - startSCHTime;
+            log.info("*********** Schedule Run Execution of MBT UFT One on browsers end: {}. SCH run took {} ms", endSCHTime, duration);
         }
+        endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+        log.info("*********** Execution of pure UFT One on browsers end: {}. test run took {} ms", endTime, duration);
     }
 
     @Test
     public void sanityTestExecutionSeleniumUnit() {
+        startTime = System.currentTimeMillis();
+        log.info("*********** Execution of pure Selenium start: {}", startTime);
         // Create TS for Selenium
         TestSuite.Data tsSelenium = TestSuite.create("Selenium_TS_" + RandomStringUtils.randomAlphabetic(5));
         tsSelenium = TestSuite.getEntityById(tsSelenium.getId(), List.of(TestSuite.Fields.NAME));
@@ -383,14 +465,20 @@ public class SanityUnits extends BaseAutomationTest {
 
         // Run schedule and wait for result
         String scheduleRunId = startSchedule();
+        log.info("*********** Schedule Run Execution of pure Selenium start: {}", startTime);
         if (waitForResults) {
             expectScheduleCompleted(scheduleRunId);
             expectGeneralRunStatus(scheduleRunId, 1, 0, 0);
         }
+        endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+        log.info("*********** Execution of pure Selenium end: {}. test run took {} ms", endTime, duration);
     }
 
     @Test
     public void sanityTestExecutionSeleniumMbtUnit() {
+        startTime = System.currentTimeMillis();
+        log.info("*********** Execution of MBT Selenium start: {}", startTime);
         // Create TS for Selenium MBT
         Unit.Data unit = Unit.getEntityByName(seleniumTestToRun);
         Model.Data modelSelenium = createModel("Selenium_Model_" + RandomStringUtils.randomAlphabetic(5), trimParenthesis(seleniumMbtRunnerName), List.of(unit));
@@ -407,14 +495,20 @@ public class SanityUnits extends BaseAutomationTest {
 
         // Run schedule and wait for result
         String scheduleRunId = startSchedule();
+        log.info("*********** Schedule Run Execution of MBT Selenium start: {}", startTime);
         if (waitForResults) {
             expectScheduleCompleted(scheduleRunId);
             expectGeneralRunStatus(scheduleRunId, 1, 0, 0);
         }
+        endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+        log.info("*********** Execution of MBT Selenium end: {}. test run took {} ms", endTime, duration);
     }
 
     @Test
     public void sanityTestReportMbtUFTUnit() {
+        startTime = System.currentTimeMillis();
+        log.info("*********** Execution of Report MBT UFT One start: {}", startTime);
         // Create TS for MBT
         Unit.Data unit = Unit.getEntityByRepositoryPath("'UFTOneAutomationTests\\\\FlightLoginRecoveryWarningAutomationTest\\\\Action1:Login'");
         Model.Data model = createModel("Recovery_Warning_Model_" + RandomStringUtils.randomAlphabetic(5), trimParenthesis(mbtRunnerName), List.of(unit));
@@ -429,17 +523,26 @@ public class SanityUnits extends BaseAutomationTest {
 
         // Run schedule and wait for result
         String scheduleRunId = startSchedule();
+        startSCHTime = System.currentTimeMillis();
+        log.info("*********** Schedule Run Execution of Report MBT UFT One start: {}", startSCHTime);
         if (waitForResults) {
             expectScheduleCompleted(scheduleRunId);
             expectGeneralRunStatus(scheduleRunId, 1, 0, 0);
-
+            endSCHTime = System.currentTimeMillis();
+            long duration = endSCHTime - startSCHTime;
+            log.info("*********** Schedule Run Execution of Report MBT UFT One end: {}. SCH run took {} ms", endSCHTime, duration);
             // Verify report text
             verifyReport(tsMbt, Arrays.asList("Login (User_Name = John, Password = hp, Wrong_User_Name = WrongUser, Wrong_Password = WrongPassword)", "Warning login Tests recovery Description (Warning)."));
         }
+        endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+        log.info("*********** Execution of Report MBT UFT One end: {}. test run took {} ms", endTime, duration);
     }
 
     @Test
     public void sanityTestReportMbtSeleniumUnit() {
+        startTime = System.currentTimeMillis();
+        log.info("*********** Execution of Report MBT Selenium start: {}", startTime);
         // Create TS for Selenium MBT
         Unit.Data unit = Unit.getEntityByName(seleniumReportTestToRun);
         Model.Data modelSelenium = createModel("Selenium_Report_Model_" + RandomStringUtils.randomAlphabetic(5), trimParenthesis(seleniumMbtRunnerName), List.of(unit));
@@ -464,6 +567,7 @@ public class SanityUnits extends BaseAutomationTest {
 
         // Run schedule and wait for result
         String scheduleRunId = startSchedule();
+        log.info("*********** Schedule Run Execution of Report MBT Selenium start: {}", startTime);
         if (waitForResults) {
             expectScheduleCompleted(scheduleRunId);
             expectGeneralRunStatus(scheduleRunId, 1, 0, 0);
@@ -471,11 +575,18 @@ public class SanityUnits extends BaseAutomationTest {
             // Verify report text
             verifyReport(tsSeleniumMbt, Arrays.asList("browserParameterXmlUrlTest (site = https://www.google.com/)"));
         }
+        endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+        log.info("*********** Execution of Report MBT Selenium end: {}. test run took {} ms", endTime, duration);
     }
 
     @Test
     public void sanityTestFunctionLibrariesMbtUFTUnit() {
-        // Create TS for MBT
+        startTime = System.currentTimeMillis();
+        log.info("*********** Execution of FL MBT UFT One start: {}", startTime);
+
+        createMBTTime = System.currentTimeMillis();
+        log.info("*********** Create Model, MBT and TS: {}", createMBTTime);
         Unit.Data unit = Unit.getEntityByRepositoryPath("'UFTOneAutomationTests\\\\FunctionLibraryAutomationTest\\\\Action1:Action1'");
         Model.Data model = createModel("Function_Libraries_Model_" + RandomStringUtils.randomAlphabetic(5), trimParenthesis(mbtRunnerName), List.of(unit));
         ModelBasedTest.Data mbtTest = createMbtTest(model);
@@ -484,20 +595,33 @@ public class SanityUnits extends BaseAutomationTest {
         navigateByUrlToEntity(tsMbt);
         addTestToTestSuite(mbtTest.getName());
 
+        createMBTEndTime = System.currentTimeMillis();
+        long durationMBT = createMBTEndTime - createMBTTime;
+        log.info("*********** Create Model, MBT and TS End: {}", createMBTEndTime, durationMBT);
         // Create schedule for MBT
         createSchedule(scheduleNameMbt, "Once");
         addSuiteToSchedule(tsMbt);
 
         // Run schedule and wait for result
         String scheduleRunId = startSchedule();
+        startSCHTime = System.currentTimeMillis();
+        log.info("*********** Schedule Run Execution of FL MBT UFT One start: {}", startSCHTime);
         if (waitForResults) {
             expectScheduleCompleted(scheduleRunId);
             expectGeneralRunStatus(scheduleRunId, 1, 0, 0);
+            endSCHTime = System.currentTimeMillis();
+            long duration = endSCHTime - startSCHTime;
+            log.info("*********** Schedule Run Execution of FL MBT UFT One end: {}. SCH run took {} ms", endSCHTime, duration);
         }
+        endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+        log.info("*********** Execution of FL MBT UFT One end: {}. test run took {} ms", endTime, duration);
     }
 
     @Test
     public void sanityTestCancelledByUserUnit() {
+        startTime = System.currentTimeMillis();
+        log.info("*********** Execution of cancel by user pure UFT One start: {}", startTime);
         // Create TS for UFT
         TestSuite.Data tsUft = TestSuite.create("UFT_Cancelled_By_User_TS_" + RandomStringUtils.randomAlphabetic(5));
         navigateByUrlToEntity(tsUft);
@@ -524,10 +648,15 @@ public class SanityUnits extends BaseAutomationTest {
         UI.functionalTestingView.scheduledRunsContainer.board.getBoardCard(scr).clickStopRun();
         UI.dialogs.clickYes();
         UI.functionalTestingView.scheduledRunsContainer.board.getBoardCard(scr).expectSkippedIcon();
+        endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+        log.info("*********** Execution of cancel by user pure UFT One end: {}. test run took {} ms", endTime, duration);
     }
 
     @Test
     public void sanityTestSkippedSchedule() {
+        startTime = System.currentTimeMillis();
+        log.info("*********** Execution of Skipped start: {}", startTime);
         // Create empty schedule
         createSchedule("Schedule_Empty", "Once");
 
@@ -545,11 +674,18 @@ public class SanityUnits extends BaseAutomationTest {
         String scheduleRunEmptyTsId = startSchedule();
         expectScheduleSkipped(scheduleRunEmptyTsId);
         expectGeneralRunStatusError(scheduleRunEmptyTsId, "The suite cannot run because it does not contain any test runs.");
+        endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+        log.info("*********** Execution of Skipped end: {}. test run took {} ms", endTime, duration);
     }
 
     @Test
     public void sanityTestExecutionMbtDPUnit() {
-        // Create TS for MBT
+        startTime = System.currentTimeMillis();
+        log.info("*********** Execution of Data Population MBT UFT One start: {}", startTime);
+
+        createMBTTime = System.currentTimeMillis();
+        log.info("*********** Create Model, MBT and TS for DP: {}", createMBTTime);
         Unit.Data unit1 = Unit.getEntityByRepositoryPath("'MBT_UFTOne_Samples\\\\Action2:RegisterNewUser'");
         Unit.Data unit2 = Unit.getEntityByRepositoryPath("'MBT_UFTOne_Samples\\\\Action1:LoginSiteUser'");
         Unit.Data unit3 = Unit.getEntityByRepositoryPath("'MBT_UFTOne_Samples\\\\Action3:OpenNewAccount'");
@@ -557,27 +693,37 @@ public class SanityUnits extends BaseAutomationTest {
         Model.Data model = createModel("UFT_Data_Population_Model_" + RandomStringUtils.randomAlphabetic(5), trimParenthesis(mbtRunnerName), List.of(unit1, unit2, unit3, unit4));
 
         ModelBasedTest.Data mbtTest = createMbtTest(model);
-        navigateByUrlToEntity(mbtTest);
-        UI.docViews.docView.selectTab("model-based-test-parameters-tab");
-
         TestSuite.Data tsMbt = TestSuite.create("MBT_UFT_Data_Population_TS_" + RandomStringUtils.randomAlphabetic(5));
         navigateByUrlToEntity(tsMbt);
         addTestToTestSuite(mbtTest.getName());
 
+        createMBTEndTime = System.currentTimeMillis();
+        long durationMBT = createMBTEndTime - createMBTTime;
+        log.info("*********** Create Model, MBT and TS for DP End: {}, duration {}", createMBTEndTime, durationMBT);
         // Create schedule for MBT
         createSchedule(scheduleNameMbt, "Once");
         addSuiteToSchedule(tsMbt.getId());
 
         // Run schedule and wait for result
         String scheduleRunId = startSchedule();
+        startSCHTime = System.currentTimeMillis();
+        log.info("*********** Schedule Run Execution of Data Population MBT UFT One start: {}", startSCHTime);
         if (waitForResults) {
             expectScheduleCompleted(scheduleRunId);
             expectGeneralRunStatus(scheduleRunId, 1, 0, 0);
+            endSCHTime = System.currentTimeMillis();
+            long duration = endSCHTime - startSCHTime;
+            log.info("*********** Schedule Run Execution of Data Population MBT UFT One end: {}. SCH run took {} ms", endSCHTime, duration);
         }
+        endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+        log.info("*********** Execution of Data Population MBT UFT One end: {}. test run took {} ms", endTime, duration);
     }
 
     @Test
     public void sanityTestExecutionSeleniumMbtDPUnit() {
+        startTime = System.currentTimeMillis();
+        log.info("*********** Execution of Data Population MBT Selenium start: {}", startTime);
         // Create TS for Selenium MBT
         Unit.Data unit1 = Unit.getEntityByRepositoryPath("'opentext.mbt.tests.MBT_Selenium_TestNG_Samples:RegisterNewUser'");
         Unit.Data unit2 = Unit.getEntityByRepositoryPath("'opentext.mbt.tests.MBT_Selenium_TestNG_Samples:LoginSiteUser'");
@@ -598,14 +744,20 @@ public class SanityUnits extends BaseAutomationTest {
 
         // Run schedule and wait for result
         String scheduleRunId = startSchedule();
+        log.info("*********** Schedule Run Execution of Data Population MBT Selenium start: {}", startTime);
         if (waitForResults) {
             expectScheduleCompleted(scheduleRunId);
             expectGeneralRunStatus(scheduleRunId, 1, 0, 0);
         }
+        endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+        log.info("*********** Execution of Data Population MBT Selenium end: {}. test run took {} ms", endTime, duration);
     }
 
     @Test
     public void sanityTestExecutionStorage() {
+        startTime = System.currentTimeMillis();
+        log.info("*********** Execution of external storage pure Selenium start: {}", startTime);
         String apiName = "myApi_" + RandomStringUtils.randomAlphabetic(5);
         String apiSecret = "!qA" + RandomStringUtils.randomAlphabetic(6) + RandomStringUtils.randomNumeric(1);
         String validJar = "valid.jar";
@@ -698,16 +850,21 @@ public class SanityUnits extends BaseAutomationTest {
         createSchedule(scheduleNameExecSt, "Once");
         addSuiteToSchedule(tsExecSt);
         String scheduleRunId = startSchedule();
-
+        log.info("*********** Schedule Run Execution of external storage pure Selenium start: {}", startTime);
         if (waitForResults) {
             // Wait for results
             expectScheduleCompleted(scheduleRunId);
             expectGeneralRunStatus(scheduleRunId, 1, 0, 0);
         }
+        endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+        log.info("*********** Execution of external storage pure Selenium end: {}. test run took {} ms", endTime, duration);
     }
 
     @Test
     public void sanityTestExecutionMBTJenkinsUnit() {
+        startTime = System.currentTimeMillis();
+        log.info("*********** Execution of MBT UFT One Jenkins CI start: {}", startTime);
         // Create TS for MBT Jenkins
         Unit.Data unit = Unit.getEntityByRepositoryPath("'UFTOne_FlightLoginAutomationTest\\\\Action1:LoginUnit'");
         Model.Data model = createModel("Jenkins_Model_" + RandomStringUtils.randomAlphabetic(5), trimParenthesis(mbtTestRunnerName), List.of(unit));
@@ -723,13 +880,20 @@ public class SanityUnits extends BaseAutomationTest {
         UI.docViews.docView.planningTab.selectRunner(mbtTestRunnerName);
         UI.docViews.docView.testSuiteContainer.toolbar.clickRunSuite();
         UI.dialogs.runTestDialog.clickRun();
+        log.info("*********** test Suite Execution of MBT UFT One Jenkins CI start: {}", startTime);
         GeneralUtils.delay(100000);
         Run.Data run = Run.getEntityByName(tsJenkinsRun);
         expectSuiteRunCompleted(run.getId());
+        endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+        log.info("*********** Execution of MBT UFT One Jenkins CI end: {}. test run took {} ms", endTime, duration);
+        System.out.println("Test Execution of MBT UFT One Jenkins CI took " + duration + " milliseconds");
     }
 
     @Test
     public void sanityTestExecutionUFTJenkinsUnit() {
+        startTime = System.currentTimeMillis();
+        log.info("*********** Execution of pure UFT One Jenkins CI start: {}", startTime);
         // Create TS for UFT Jenkins
         String tsJenkinsRun = "UFT_Jenkins_TS_" + RandomStringUtils.randomAlphabetic(5);
         TestSuite.Data tsUFTJenkins = TestSuite.create(tsJenkinsRun);
@@ -737,14 +901,23 @@ public class SanityUnits extends BaseAutomationTest {
         addTestToTestSuite("UFTOne_FlightLoginAutomationTest");
         UI.docViews.docView.testSuiteContainer.toolbar.clickRunSuite();
         UI.dialogs.runTestDialog.clickRun();
+        log.info("*********** test Suite Execution of pure UFT One Jenkins CI start: {}", startTime);
         GeneralUtils.delay(100000);
         Run.Data run = Run.getEntityByName(tsJenkinsRun);
         expectSuiteRunCompleted(run.getId());
+        endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+        log.info("*********** Execution of pure UFT One Jenkins CI end: {}. test run took {} ms", endTime, duration);
+        System.out.println("Test Execution of pure UFT One Jenkins CI took " + duration + " milliseconds");
     }
 
     @Test
     public void sanityTestExecutionIterationMbtUftUnit() {
-        // Create TS for MBT
+        startTime = System.currentTimeMillis();
+        log.info("*********** Execution of MBT UFT One Iteration start: {}", startTime);
+
+        createMBTTime = System.currentTimeMillis();
+        log.info("*********** Create Model, MBT and TS for Iteration: {}", createMBTTime);
         Unit.Data unit = Unit.getEntityByRepositoryPath("'UFTOneAutomationTests\\\\BrowsersTesFireFox\\\\Action1:FireFox'");
         Model.Data model = createModel("Iteration_UFT_Model_" + RandomStringUtils.randomAlphabetic(5), trimParenthesis(getMbtRunnerName()), List.of(unit));
 
@@ -765,20 +938,33 @@ public class SanityUnits extends BaseAutomationTest {
         navigateByUrlToEntity(tsMbt);
         addTestToTestSuite(mbtTest.getName());
 
+        createMBTEndTime = System.currentTimeMillis();
+        long durationMBT = createMBTEndTime - createMBTTime;
+        log.info("*********** Create Model, MBT and TS for Iteration End: {}", createMBTEndTime, durationMBT);
         // Create schedule for MBT
         createSchedule(scheduleNameMbt, "Once");
         addSuiteToSchedule(tsMbt.getId());
 
         // Run schedule and wait for result
         String scheduleRunId = startSchedule();
+        startSCHTime = System.currentTimeMillis();
+        log.info("*********** Schedule Run Execution of MBT UFT One Iteration start: {}", startSCHTime);
         if (waitForResults) {
             expectScheduleCompleted(scheduleRunId);
             expectGeneralRunStatus(scheduleRunId, 1, 0, 0);
+            endSCHTime = System.currentTimeMillis();
+            long duration = endSCHTime - startSCHTime;
+            log.info("*********** Schedule Run Execution of MBT UFT One Iteration end: {}. SCH run took {} ms", endSCHTime, duration);
         }
+        long duration = endTime - startTime;
+        log.info("*********** Execution of MBT UFT One Iteration end: {}. test run took {} ms", endTime, duration);
+        System.out.println("Test Execution of MBT UFT One Iteration took " + duration + " milliseconds");
     }
 
     @Test
     public void sanityTestExecutionIterationMbtSeleniumUnit() {
+        startTime = System.currentTimeMillis();
+        log.info("*********** Execution of MBT Selenium Iteration start: {}", startTime);
         // Create TS for Selenium MBT
         Unit.Data unit = Unit.getEntityByName("reporterSideRespondTest");
         Model.Data model = createModel("Iteration_Selenium_Model_" + RandomStringUtils.randomAlphabetic(5), trimParenthesis(getMbtRunnerName()), List.of(unit));
@@ -786,6 +972,7 @@ public class SanityUnits extends BaseAutomationTest {
         ModelBasedTest.Data mbtTest = createMbtTest(model);
         navigateByUrlToEntity(mbtTest);
 
+        // Add iterations
         UI.docViews.docView.selectTab("mbt-data-table");
         UI.docViews.docView.dataSetsContainer.grid.getSlickRow(1).getCell(2).click();
         UI.docViews.docView.dataSetsContainer.grid.getSlickRow(1).getCell(2).sendKeys("https://www.google.com/");
@@ -798,20 +985,158 @@ public class SanityUnits extends BaseAutomationTest {
         UI.docViews.docView.dataSetsContainer.grid.getSlickRow(1).click();
         UI.docViews.docView.dataSetsContainer.toolbar.clickSave();
 
-        TestSuite.Data tsMbt = TestSuite.create("MBT_Selenium_Iteration_TS_" + RandomStringUtils.randomAlphabetic(5));
-        navigateByUrlToEntity(tsMbt);
-        addTestToTestSuite(mbtTest.getName());
+        // Create test suite
+        TestSuite.Data tsSeleniumMbt = TestSuite.create("MBT_Selenium_Iteration_TS_" + RandomStringUtils.randomAlphabetic(5));
+        navigateByUrlToEntity(tsSeleniumMbt);
+        addTestToTestSuite(mbtTest);
 
         // Create schedule for MBT
         createSchedule(scheduleNameMbt, "Once");
-        addSuiteToSchedule(tsMbt.getId());
+        addSuiteToSchedule(tsSeleniumMbt.getId());
 
         // Run schedule and wait for result
         String scheduleRunId = startSchedule();
+        log.info("*********** Schedule Run Execution of MBT Selenium Iteration start: {}", startTime);
         if (waitForResults) {
             expectScheduleCompleted(scheduleRunId);
             expectGeneralRunStatus(scheduleRunId, 1, 0, 0);
+
+            // Verify report text
+            verifyReport(tsSeleniumMbt, Arrays.asList("Iteration: 2", "reporterSideRespondTest (site_alvaro = https://www.google.com/)"));
         }
+        endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+        log.info("*********** Execution of MBT Selenium Iteration end: {}. test run took {} ms", endTime, duration);
+        System.out.println("Test Execution of MBT Selenium Iteration took " + duration + " milliseconds");
+    }
+
+    @Test
+    public void sanityTestReportMbtUftParallel() {
+        startTime = System.currentTimeMillis();
+        log.info("*********** Execution of MBT UFT One parallel Report start: {}", startTime);
+
+        createMBTTime = System.currentTimeMillis();
+        log.info("*********** Create Model, MBT and TS for Report and parallel run: {}", createMBTTime);
+        Unit.Data unit = Unit.getEntityByRepositoryPath("'UFTOneAutomationTests\\\\BrowsersTesFireFox\\\\Action1:FireFox'");
+        Model.Data model = createModel("Iteration_UFT_Model_" + RandomStringUtils.randomAlphabetic(5), trimParenthesis(getMbtRunnerName()), List.of(unit));
+        ModelBasedTest.Data mbtTest = createMbtTest(model);
+
+        // Add iterations for MBT test
+        navigateByUrlToEntity(mbtTest);
+        UI.docViews.docView.selectTab("mbt-data-table");
+        UI.docViews.docView.dataSetsContainer.grid.getSlickRow(2).getCell(2).click();
+        UI.docViews.docView.dataSetsContainer.grid.getSlickRow(2).getCell(2).sendKeys("https://sp.booking.com/index.html?");
+        UI.docViews.docView.dataSetsContainer.grid.getSlickRow(1).click();
+        UI.docViews.docView.dataSetsContainer.grid.getSlickRow(3).getCell(2).click();
+        UI.docViews.docView.dataSetsContainer.grid.getSlickRow(3).getCell(2).sendKeys("https://sp.booking.com/index.html?");
+        UI.docViews.docView.dataSetsContainer.grid.getSlickRow(1).click();
+        UI.docViews.docView.dataSetsContainer.toolbar.clickSave();
+
+        // Create TS for MBT UFT
+        TestSuite.Data tsMbtUft = TestSuite.create("MBT_UFT_TS_" + RandomStringUtils.randomAlphabetic(5));
+        navigateByUrlToEntity(tsMbtUft);
+        addTestToTestSuite(mbtTest.getName(), "FunctionLibraryAutomationTest");
+        setMachineTemplateAndRunMode("UFTOne", "Parallel");
+
+        createMBTEndTime = System.currentTimeMillis();
+        long durationMBT = createMBTEndTime - createMBTTime;
+        log.info("*********** Create Model, MBT and TS for Report and parallel run End: {}", createMBTEndTime, durationMBT);
+        // Create schedule for MBT UFT
+        createSchedule(scheduleNameUftRec, "Recurring");
+        addSuiteToSchedule(tsMbtUft.getId());
+        String recurringScheduleRunId = startSchedule();
+        startSCHTime = System.currentTimeMillis();
+        log.info("*********** Schedule Run Execution of MBT UFT One parallel Report start: {}", startSCHTime);
+        // Wait for results
+        if (waitForResults) {
+            expectScheduleCompleted(recurringScheduleRunId);
+            expectGeneralRunStatus(recurringScheduleRunId, 2, 0, 0);
+            endSCHTime = System.currentTimeMillis();
+            long duration = endSCHTime - startSCHTime;
+            log.info("*********** Schedule Run Execution of MBT UFT One parallel Report end: {}. SCH run took {} ms", endSCHTime, duration);
+            downloadReportTime = System.currentTimeMillis();
+            log.info("*********** verify report start: {}", downloadReportTime);
+            // Verify report text
+            verifyReport(tsMbtUft, Arrays.asList("Iteration: 2", "FireFox (url = https://sp.booking.com/index.html?)"));
+
+            // Download report
+            navigateByUrlToEntity(tsMbtUft);
+
+            UI.docViews.docView.selectTab("suite_runs");
+            UI.docViews.docView.runsContainer.grid.getRow(1).clickId();
+
+            UI.docViews.docView.selectTab("run");
+            UI.docViews.docView.suiteRunsContainer.grid.getRow(1).clickId();
+
+            UI.docViews.docView.detailsTab.expectVisible();
+            UI.docViews.docView.detailsTab.toolbar.clickDownloadTestRunReport();
+            downloadReportTime = System.currentTimeMillis();
+            log.info("*********** download report start: {}", downloadReportTime);
+            UI.notifications.success.expectTextToContain("Test run report successfully downloaded");
+        }
+        endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+        log.info("*********** Execution of MBT UFT One parallel Report end: {}. test run took {} ms", endTime, duration);
+        System.out.println("Execution of MBT UFT One parallel Report Test took " + duration + " milliseconds");
+    }
+
+    @Test
+    public void runSanity() {
+        startTime = System.currentTimeMillis();
+        log.info("*********** Execution of runSanity tests start: {}", startTime);
+        // Initialize the necessary units
+        Unit.Data unitBeforeTest = Unit.getEntityByRepositoryPath("'com.ot.automation.tests.SanityUnits:beforeTest'");
+        Unit.Data unitLoginOctane = Unit.getEntityByRepositoryPath("'com.ot.automation.tests.SanityUnits:loginOctaneUnit'");
+        Unit.Data unit1 = Unit.getEntityByRepositoryPath("'com.ot.automation.tests.SanityUnits:sanityTestExecutionUftRecurringUnit'");
+        Unit.Data unit2 = Unit.getEntityByRepositoryPath("'com.ot.automation.tests.SanityUnits:sanityTestReportMbtUFTUnit'");
+        Unit.Data unit3 = Unit.getEntityByRepositoryPath("'com.ot.automation.tests.SanityUnits:sanityTestExecutionSeleniumMbtUnit'");
+        Unit.Data unit4 = Unit.getEntityByRepositoryPath("'com.ot.automation.tests.SanityUnits:sanityTestReportMbtSeleniumUnit'");
+
+        // Create the main model based on the units
+        Model.Data executionsModel = createMainModel("Sanity Octane Execution " + RandomStringUtils.randomAlphabetic(5), mainProjectRunnerName, List.of(unitBeforeTest, unitLoginOctane, unit1, unit2, unit3, unit4));
+        List<ModelBasedTest.Data> modelBasedTests = createMbtTest(executionsModel, 1, 2, 3, 4);
+
+        // Add data set data to mbt tests
+        for (ModelBasedTest.Data mbt : modelBasedTests) {
+            navigateByUrlToEntity(mbt);
+            UI.docViews.docView.selectTab("mbt-data-table");
+            UI.docViews.docView.dataSetsContainer.grid.getSlickRow(1).getCell(2).click();
+            UI.docViews.docView.dataSetsContainer.grid.getSlickRow(1).getCell(2).sendKeys("https://integration-master-dev.almoctane.com");
+            UI.docViews.docView.dataSetsContainer.grid.getSlickRow(1).getCell(4).click();
+            UI.docViews.docView.dataSetsContainer.grid.getSlickRow(1).getCell(4).sendKeys("FTE_*");
+            UI.docViews.docView.dataSetsContainer.grid.getSlickRow(1).getCell(5).click();
+            UI.docViews.docView.dataSetsContainer.grid.getSlickRow(1).getCell(5).sendKeys("sanity_workspace");
+            UI.docViews.docView.dataSetsContainer.grid.getSlickRow(1).getCell(6).click();
+            UI.docViews.docView.dataSetsContainer.grid.getSlickRow(1).getCell(6).sendKeys("mqm_rnd@hpe.com");
+            UI.docViews.docView.dataSetsContainer.grid.getSlickRow(1).getCell(7).click();
+            UI.docViews.docView.dataSetsContainer.grid.getSlickRow(1).getCell(7).sendKeys("JustK33pGoing!");
+            UI.docViews.docView.dataSetsContainer.grid.getSlickRow(1).getCell(3).click();
+            UI.docViews.docView.dataSetsContainer.toolbar.clickSave();
+        }
+
+        // Create test suite and add mbt tests
+        TestSuite.Data tsSanity = TestSuite.create("Sanity_Execution_" + RandomStringUtils.randomAlphabetic(5));
+        navigateByUrlToEntity(tsSanity);
+        for (ModelBasedTest.Data mbt : modelBasedTests) {
+            addTestToTestSuite(mbt.getName());
+        }
+        setMachineTemplateAndRunMode("Selenium TestNG,   (Default)", "Parallel");
+
+        // Create schedule for MBT
+        createSchedule("Sanity Execution", "Once");
+        addSuiteToSchedule(tsSanity);
+
+        // Run schedule and wait for result
+        String scheduleRunId = startSchedule();
+        log.info("*********** Schedule Run Execution of runSanity tests start: {}", startTime);
+        if (waitForResults) {
+            expectScheduleCompleted(scheduleRunId, 3600000);
+            expectGeneralRunStatus(scheduleRunId, 1, 0, 0);
+        }
+        endTime = System.currentTimeMillis();
+        long duration = endTime - startTime;
+        log.info("*********** Execution of runSanity tests end: {}. test run took {} ms", endTime, duration);
+        System.out.println("Execution of runSanity Test took " + duration + " milliseconds");
     }
 
     @Test
@@ -895,7 +1220,7 @@ public class SanityUnits extends BaseAutomationTest {
         UI.spacesMainView.workspaceForm.devopsView.expectVisible();
     }
 
-    private CloudRunner.Data createCloudRunner(String runnerName, String framework, String repoUrl, String packagePath) {
+    private CloudRunner.Data createCloudRunner(String runnerName, String framework, String repoUrl, String packagePath, String username, String password) {
         CloudRunner.Data runner = CloudRunner.getEntityByName(runnerName, List.of(CloudRunner.Fields.NAME, CloudRunner.Fields.SYNC_STATUS, CloudRunner.Fields.CI_SERVER, CloudRunner.Fields.FRAMEWORK));
         if (runner.getEntityType() == null) {
             // If runner with the same name doesn't exist, create it
@@ -905,6 +1230,14 @@ public class SanityUnits extends BaseAutomationTest {
             UI.dialogs.devOpsDialogs.cloudRunnerDialog.name.expectValue(runnerName);
             UI.dialogs.devOpsDialogs.cloudRunnerDialog.framework.setValue(framework);
             UI.dialogs.devOpsDialogs.cloudRunnerDialog.framework.expectValue(framework);
+
+            if (username != null) {
+                UI.dialogs.devOpsDialogs.cloudRunnerDialog.username.sendKeys(username);
+            }
+
+            if (password != null) {
+                UI.dialogs.devOpsDialogs.cloudRunnerDialog.password.sendKeys(password);
+            }
 
             // Check Test Connection button
             if (repoUrl != null) {
@@ -985,6 +1318,24 @@ public class SanityUnits extends BaseAutomationTest {
         return model;
     }
 
+    private Model.Data createMainModel(String modelName, String modelFolder, List<Unit.Data> units) {
+        ModelFolder.Data mbtFolder = ModelFolder.getEntityByName(modelFolder);
+        Model.Data model = Model.create(modelName, mbtFolder);
+
+        List<Object> transitions = new ArrayList<>();
+        transitions.add(Arrays.asList(MBTUtils.DiagramNodes.START_NODE, units.get(0)));
+        transitions.add(Arrays.asList(units.get(0), units.get(1)));
+        transitions.add(Arrays.asList(units.get(1), MBTUtils.DiagramNodes.DECISION));
+
+        for (int i = 2; i < units.size(); i++) {
+            transitions.add(Arrays.asList(MBTUtils.DiagramNodes.DECISION, units.get(i)));
+            transitions.add(Arrays.asList(units.get(i), MBTUtils.DiagramNodes.END_NODE));
+        }
+
+        MBTUtils.createDiagram(model, null, units, null, 1, 0, 1, transitions);
+        return model;
+    }
+
     private ModelBasedTest.Data createMbtTest(Model.Data model) {
         navigateByUrlToEntity(model);
         UI.docViews.docView.selectTab("mbt-path-tab");
@@ -1001,8 +1352,34 @@ public class SanityUnits extends BaseAutomationTest {
         }
     }
 
-    private void expectScheduleCompleted(String scheduleRunId) {
-        String status = waitScheduleInProgress(1200000, scheduleRunId);
+    private List<ModelBasedTest.Data> createMbtTest(Model.Data model, int... pathNumbers) {
+        List<ModelBasedTest.Data> mbtsToReturn = new ArrayList<>();
+        navigateByUrlToEntity(model);
+        UI.docViews.docView.selectTab("mbt-path-tab");
+
+        if (pathNumbers == null) {
+            pathNumbers[0] = 1;
+        }
+
+        for (int i = 0; i < pathNumbers.length; i++) {
+            if (!UI.docViews.docView.pathsContainer.grid.getRow(pathNumbers[i]).getCell("covered_by_test").getText().equals("")) {
+                String testId = UI.docViews.docView.pathsContainer.grid.getRow(pathNumbers[i]).getCell("covered_by_test").getChildElement(Locator.cssSelector("a")).getText();
+                mbtsToReturn.add(ModelBasedTest.getEntityById(testId, List.of(ModelBasedTest.Fields.NAME, ModelBasedTest.Fields.ID)));
+            } else {
+                UI.docViews.docView.pathsContainer.grid.getRow(pathNumbers[i]).select();
+                UI.docViews.docView.pathsContainer.toolbar.clickGenerateTest();
+                UI.dialogs.modelTestGeneratorDialog.clickGenerate();
+                UI.notifications.success.expectVisible();
+                mbtsToReturn.add(ModelBasedTest.getEntityByName(model.getName() + "_0000" + pathNumbers[i], List.of(ModelBasedTest.Fields.NAME, ModelBasedTest.Fields.ID)));
+                UI.docViews.docView.pathsContainer.grid.getRow(pathNumbers[i]).select();
+
+            }
+        }
+        return mbtsToReturn;
+    }
+
+    private void expectScheduleCompleted(String scheduleRunId, int... waitTimeMs) {
+        String status = waitScheduleInProgress(waitTimeMs.length > 0 ? waitTimeMs[0] : 1200000, scheduleRunId);
         Assert.assertTrue(status.contains("Completed"), "Schedule run expected status: Completed. Actual status: " + status);
     }
 
@@ -1066,6 +1443,23 @@ public class SanityUnits extends BaseAutomationTest {
             UI.dialogs.addExistingTestsDialog.toolbar.search(testName);
             UI.dialogs.addExistingTestsDialog.grid.getRowById(test.getId()).select();
             UI.dialogs.addExistingTestsDialog.clickAdd();
+            UI.dialogs.addExistingTestsDialog.toolbar.clearSearch();
+        }
+
+        UI.dialogs.addExistingTestsDialog.clickClose();
+        UI.dialogs.addExistingTestsDialog.expectNotVisible();
+    }
+
+    private void addTestToTestSuite(Entity.Data... tests) {
+        UI.docViews.docView.testsContainer.toolbar.clickAddExistingTests();
+        UI.dialogs.addExistingTestsDialog.grid.expectVisible();
+
+        for (Entity.Data test : tests) {
+            UI.dialogs.addExistingTestsDialog.toolbar.clickRefresh();
+            UI.dialogs.addExistingTestsDialog.toolbar.search(test.getName());
+            UI.dialogs.addExistingTestsDialog.grid.getRowById(test.getId()).select();
+            UI.dialogs.addExistingTestsDialog.clickAdd();
+            UI.dialogs.addExistingTestsDialog.toolbar.clearSearch();
         }
 
         UI.dialogs.addExistingTestsDialog.clickClose();

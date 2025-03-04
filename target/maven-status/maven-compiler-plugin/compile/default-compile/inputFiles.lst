@@ -1,6 +1,7 @@
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\spaces\DevOpsView.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\framework\Entities\CIServer.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\framework\Entities\SuiteRunSchedulerRun.java
+C:\dev\fte-automation\src\main\java\com\ot\automation\tests\MbtToDesign.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\Notifications.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\tests\EmptyTest.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\fte\RunsContainer.java
@@ -16,7 +17,9 @@ C:\dev\fte-automation\src\main\java\com\ot\automation\framework\backoffice\IPPag
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\framework\BaseElement.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\fte\PathsContainer.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\framework\UrlNavigation.java
+C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\framework\Entities\SharedSpace.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\Grid.java
+C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\dialogs\UniversalNotification.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\fte\FteTestSuitesContainer.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\backoffice\IPTenantsTab.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\framework\RequestLevel.java
@@ -25,6 +28,7 @@ C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\dialog
 C:\dev\fte-automation\src\main\java\com\ot\automation\tests\SanityV2.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\spaces\TestRunnersContainer.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\ParametersContainer.java
+C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\dialogs\CreateCodelessScriptDialog.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\spaces\CiServersContainer.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\framework\MBTUtils.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\dialogs\AddTestSuiteDialog.java
@@ -35,11 +39,15 @@ C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\spaces
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\DocViews.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\fte\FunctionalTestingExecutionView.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\DateTimeEditor.java
+C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\mbt\ModelsContainer.java
+C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\mbt\UnitsTab.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\framework\Entities\Release.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\framework\Entities\Entity.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\spaces\SpacesMainView.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\dialogs\Dialogs.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\framework\UrlUtils.java
+C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\mbt\ModelBasedTestingView.java
+C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\dialogs\WhatsNewDialog.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\SmartEditor.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\framework\Entities\ModelFolder.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\dialogs\CloudRunnerDialog.java
@@ -58,6 +66,7 @@ C:\dev\fte-automation\src\main\java\com\ot\automation\tests\QATools.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\tests\ClassParam.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\LoginPage.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\framework\Entities\Role.java
+C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\dialogs\CreateSampleProjectDialog.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\spaces\SpacesForm.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\PlanningTab.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\backoffice\IPSubscriptionTermsTab.java
@@ -65,7 +74,9 @@ C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\Board.
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\spaces\WorkspacesForm.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\framework\RestCallResult.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\framework\Entities\FteArtifact.java
+C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\mbt\ModelTree.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\framework\BaseAutomationTest.java
+C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\mbt\ModelsTab.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\dialogs\AddTestDialog.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\framework\Entities\Workspace.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\dialogs\AddCIServerDialog.java
@@ -73,6 +84,7 @@ C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\fte\Sc
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\UI.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\framework\Entities\ModelBasedTest.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\dialogs\AddEntityDialog.java
+C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\dialogs\WarningMessageDialog.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\framework\Entities\ListNode.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\fte\TestSuiteContainer.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\dialogs\AddExistingTestsDialog.java
@@ -86,10 +98,12 @@ C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\Entity
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\GridCell.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\framework\Entities\AutomatedRun.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\Notification.java
+C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\mbt\UnitsContainer.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\fte\SuiteRunsContainer.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\DetailsTab.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\fte\SchedulesContainer.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\framework\Entities\Model.java
+C:\dev\fte-automation\src\main\java\com\ot\automation\tests\DataPopulation.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\framework\Entities\CloudRunner.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\framework\Entities\TestSuite.java
 C:\dev\fte-automation\src\main\java\com\ot\automation\framework\octane\ui\spaces\SiteAdminMainView.java

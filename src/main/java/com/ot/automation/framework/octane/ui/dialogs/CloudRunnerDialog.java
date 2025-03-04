@@ -12,7 +12,7 @@ public class CloudRunnerDialog extends BaseElement {
     public BaseElement name = new BaseElement(Locator.dataAid("test-runner-name-input"), this);
     public SmartEditor framework = new SmartEditor(Locator.cssSelector("[field-metadata='cloudRunnerDialogCtrl.testRunnerDialogService.frameworkField']"), this);
     public BaseElement url = new BaseElement(Locator.cssSelector("[ng-model='cloudRunnerDialogCtrl.cloudExecutorEntity.scm_repository.url']"), this);
-    public BaseElement username = new BaseElement(Locator.cssSelector("[ng-model='cloudRunnerDialogCtrl.cloudExecutorEntity.username']"), this);
+    public BaseElement username = new BaseElement(Locator.dataAid("test-runner-username-input"), this);
     public BaseElement password = new BaseElement(Locator.dataAid("test-runner-password-input"), this);
     public BaseElement testConnectionButton = new BaseElement(Locator.dataAid("test-connection-button"), this);
     public BaseElement syncNowButton = new BaseElement(Locator.dataAid("sync-now-button"), this);
@@ -29,12 +29,12 @@ public class CloudRunnerDialog extends BaseElement {
         new BaseElement(Locator.dataAid("admin:test-runner-dialog-action-tab-cancel"), this).click();
     }
 
-    public String getTestConnectionMessage(){
+    public String getTestConnectionMessage() {
         String innerText = testConnectionMessage.getText();
         return innerText;
     }
 
-    public String getSyncNowMessage(){
+    public String getSyncNowMessage() {
         String innerText = syncNowMessage.getText();
         return innerText;
     }
@@ -46,7 +46,7 @@ public class CloudRunnerDialog extends BaseElement {
         packagePathBox.sendKeys(packagePath);
     }
 
-    public void selectExecutionStorage(){
+    public void selectExecutionStorage() {
         BaseElement executionStorageButton = new BaseElement(Locator.dataAid("external-storage-button alm-radio-button"), this);
         executionStorageButton.click();
     }

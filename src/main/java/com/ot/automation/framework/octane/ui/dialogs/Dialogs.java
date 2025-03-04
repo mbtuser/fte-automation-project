@@ -14,6 +14,7 @@ public class Dialogs {
     public final CreateSampleProjectDialog createSampleProjectDialog = new CreateSampleProjectDialog();
     public final WarningMessageDialog warningMessageDialog = new WarningMessageDialog();
     public final WhatsNewDialog whatsNewDialog = new WhatsNewDialog();
+    public final CreateCodelessScriptDialog createCodelessScriptDialog = new CreateCodelessScriptDialog();
 
     public void clickOk() {
         BaseElement button = new BaseElement(Locator.dataAid("dialog.ok"), null);

@@ -97,8 +97,13 @@ public class Toolbar extends BaseElement {
     }
 
     public void clickDownloadTestRunReport() {
-        BaseElement generateButton = new BaseElement(By.cssSelector("[data-aid*='testRunExternalReportAction']"), this);
-        generateButton.click();
+        BaseElement downloadReportButton = new BaseElement(By.cssSelector("[data-aid*='testRun'][data-aid*='ExternalReportAction']"), this);
+        downloadReportButton.click();
+    }
+
+    public void clickDownloadRecording() {
+        BaseElement downloadRecordingButton = new BaseElement(By.cssSelector("[data-aid*='testRunDownloadExternalAssetsAction']"), this);
+        downloadRecordingButton.click();
     }
 
     public void clickLinkParameters() {
@@ -124,5 +129,10 @@ public class Toolbar extends BaseElement {
     public void clickCreateSampleButton() {
         BaseElement dataPopulationButton = new BaseElement(By.cssSelector("[data-aid*='data-population']"), this);
         dataPopulationButton.click();
+    }
+
+    public void clickCreateInDesignButton() {
+        BaseElement createInDesignButton = new BaseElement(By.cssSelector("[data-aid*='unitGenerateCodelessScriptAction']"), this);
+        createInDesignButton.click();
     }
 }
